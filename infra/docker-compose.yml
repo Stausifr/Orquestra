@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orquestra
+  redis:
+    image: redis:7
+  jaeger:
+    image: jaegertracing/all-in-one:1.46
+    ports:
+      - '16686:16686'
+  orchestrator:
+    build:
+      context: ..
+      dockerfile: services/orchestrator/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/orquestra
+      REDIS_URL: redis://redis:6379/0
+      MOCK_BASE_URL: http://mock-integrations:9000
+    depends_on:
+      - db
+      - redis
+      - mock-integrations
+    ports:
+      - '8000:8000'
+  worker:
+    build:
+      context: ..
+      dockerfile: services/worker/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/orquestra
+      REDIS_URL: redis://redis:6379/0
+      MOCK_BASE_URL: http://mock-integrations:9000
+    depends_on:
+      - orchestrator
+  mock-integrations:
+    build:
+      context: ..
+      dockerfile: services/mock-integrations/Dockerfile
+  ui:
+    build:
+      context: ../ui/dashboard
+    ports:
+      - '3000:3000'
+    depends_on:
+      - orchestrator

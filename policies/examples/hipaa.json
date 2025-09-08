@@ -1,0 +1,10 @@
+{
+  "data_tags": ["pii", "phi"],
+  "rules": {
+    "snowflake.query": {"required_tags": ["phi"], "decision": "require_approval"},
+    "copilot.summarize": {"required_tags": ["phi"], "decision": "allow"},
+    "salesforce.update": {"required_tags": [], "decision": "allow"}
+  },
+  "masking": {"pii": "hash", "phi": "redact"},
+  "approval_roles": ["Approver"]
+}
