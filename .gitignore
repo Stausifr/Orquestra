@@ -1,0 +1,6 @@
+ui/dashboard/node_modules/
+storage/*.json
+storage/*.pdf
+__pycache__/
+*.pyc
+orq.db
