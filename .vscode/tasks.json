@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Stack",
+      "type": "shell",
+      "command": "docker compose -f infra/docker-compose.yml up -d --build"
+    },
+    {
+      "label": "Tail Logs",
+      "type": "shell",
+      "command": "docker compose -f infra/docker-compose.yml logs -f --tail=200"
+    },
+    {
+      "label": "Seed Data",
+      "type": "shell",
+      "command": "docker compose -f infra/docker-compose.yml exec mock-integrations python /app/seed.py"
+    },
+    {
+      "label": "Trigger Demo",
+      "type": "shell",
+      "command": "docker compose -f infra/docker-compose.yml exec orchestrator curl -s -X POST http://orchestrator:8000/incidents/simulate -H \"Content-Type: application/json\" -d '{\"source\":\"servicenow\",\"type\":\"patient_portal_login_failure\"}'"
+    },
+    {
+      "label": "Down",
+      "type": "shell",
+      "command": "docker compose -f infra/docker-compose.yml down -v --remove-orphans"
+    }
+  ]
+}
